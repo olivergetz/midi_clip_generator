@@ -1,0 +1,83 @@
+Plays the note C for a half note with the sound of a flute
+One decimal in hex = 4 bits (nibble)
+FF = meta data. FF <type> <length> <data>
+All hex can be on one line if needed.
+
+HEADER
+
+4d54 6864 - Header ID
+
+0000 0006 - Size of header in bytes
+
+00 01 - MIDI format
+
+00 02 - Number of tracks
+
+03 c0 - PPQN
+
+--- New Track ---
+
+4d54 726b - Track ID. Since this is format 2, the first track contains global data (tempo, time signature, etc.) and not note data.
+
+0000 0029 - Length of track in bytes
+
+00 - Time since last event, 
+
+ff 58 04 | 04 02 18 08 	- Time signature. 04 = numerator. 02 = Denominator (02=Q,03=8th,04=16th), 18 = PPQN, 08 = the number of notated 32nd-notes in a 						- MIDI quarter-note. Leave at 08. All of this means 4/4 with a click on every quarter note.
+00
+
+ff 59 02 | 00 00 		- Key signature. Last two bytes = Number of flats/sharps, minor or major. 
+						- This case: No signature, Major.
+00						- Delta Time Hex
+
+ff 51 | 03 09 27 c0 	- Tempo in time per beat.
+
+00 						- Delta Time Hex
+
+ff 02 					- Copyright start
+
+0c 						- Length of the copyright in bytes, 12 in this case.
+
+43 6f 70 79 			- Spells "Copy"
+
+72 69 67 68 74 			- Spells "right"
+
+20 a9 					- Presumably the Copyright symbol
+
+20 						- Don't know
+
+01 						- Delta Time Hex
+
+ff 2f 00				- End of track
+
+--- New Track ---
+
+4d54 726b 				- Track ID
+
+0000 002d 				- Length of track in bytes. 45 bytes.
+
+00 						- Time since last event,
+
+c0 49 					- Program Change 73 = Flute
+
+00						- Delta Time Hex
+
+b0 79 00 00 - Control Change 121 (Reset all controllers) set to 0.
+b0 40 00 00 - Control Change 64 (Sustain) set to 0.
+b0 5b 34 00 - Control Change 91 (Reverb) set to 52.
+b0 0a 46 00 - Control Change 10 (Panning) set to 70.
+b0 07 5f 00 - Control Change 7 (Volume) set to 95.
+
+ff 03 | 05 | 46 6c 75 74 65 = Track name, length in bytes, spells out "Flute." FF 04 is the same, but Instrument Name.
+
+00 			- Delta Time Hex
+
+9| 0 | 3c | 51 - Note on, channel 1, note 60, velocity 81
+
+9e 00		- Delta Time Hex
+
+8| 0 | 3c | 00 - Note off, channel 1, note 60, velocity 0
+
+01			- Delta Time Hex
+
+ff 2f 00 - End of Track.
